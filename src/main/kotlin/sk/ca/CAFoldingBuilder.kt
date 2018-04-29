@@ -10,21 +10,24 @@ import java.util.regex.Pattern
 
 class CAFoldingBuilder : FoldingBuilder {
     private val symbolPattern = Pattern.compile(
-            "function|->|<-|=>|===|!=|<=|>="
+            "function|->|<-|=>|===|!=|<=|>=|==|&&|\\|\\|"
     )
 
     private val prettySymbolMaps = hashMapOf(
             "function" to "ƒ",
-            "->" to "→",
-            "<-" to "←",
-            "=>" to "⇒",
-            "===" to "≡",
-            "!=" to "≠",
-            "<=" to '≤',
-            ">=" to '≥'
+            "->"       to "→",
+            "<-"       to "←",
+            "=>"       to "⇒",
+            "==="      to "≡",
+            "=="      to "is",
+            "&&"      to "and",
+            "||"      to "or",
+            "!="       to "≠",
+            "<="       to '≤',
+            ">="       to '≥'
     )
     private val constants = arrayOf("function", "!=", "<=", ">=",
-                                    "->", "=>", "<-", "===")
+                                    "->", "=>", "<-", "===", "==", "&&", "||", "!=")
 
     override fun buildFoldRegions(node: ASTNode, document: Document): Array<out FoldingDescriptor> {
         val descriptors = ArrayList<FoldingDescriptor>()
@@ -42,7 +45,7 @@ class CAFoldingBuilder : FoldingBuilder {
             if (rangeEnd + 1 > text.length) continue
             val nextChar = text.substring(rangeEnd, rangeEnd + 1)
             val prevChar = text.substring(rangeStart - 1, rangeStart)
-            var shouldFold = constants.contains(key) && prevChar == " " && (nextChar == " " || nextChar == "\n")
+            var shouldFold = constants.contains(key) && (prevChar == " " || prevChar == "^") && (nextChar == " " || nextChar == "\n")
             if (shouldFold) {
                 val pretty = prettySymbolMaps[key] ?: return arrayOf<FoldingDescriptor>()
                 val range = TextRange.create(rangeStart, rangeEnd)

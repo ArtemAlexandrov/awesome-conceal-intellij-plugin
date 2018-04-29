@@ -16,7 +16,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <lang.foldingBuilder
-                language="JSON"
+                language="CoffeeScript"
                 implementationClass="sk.ca.CAFoldingBuilder"/>
     </extensions>
 
